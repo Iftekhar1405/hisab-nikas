@@ -1,52 +1,40 @@
 
 import React from 'react';
-import { 
-  ShoppingBag, 
-  UtensilsCrossed, 
-  Car, 
-  Receipt, 
-  Music, 
-  Stethoscope, 
-  GraduationCap, 
-  CircleDollarSign, 
-  Briefcase, 
-  TrendingUp, 
-  Gift, 
-  HelpCircle 
-} from 'lucide-react';
+import Icon from 'react-native-vector-icons/Feather';
 import { ExpenseCategory, IncomeCategory } from '@/utils/expenseUtils';
-import { cn } from '@/lib/utils';
 
 interface CategoryIconProps {
   category: ExpenseCategory | IncomeCategory;
   size?: number;
-  className?: string;
+  color?: string;
 }
 
-export const CategoryIcon: React.FC<CategoryIconProps> = ({ 
+const CategoryIcon: React.FC<CategoryIconProps> = ({ 
   category, 
-  size = 24, 
-  className 
+  size = 20, 
+  color = "#000000"
 }) => {
-  const icons: Record<ExpenseCategory | IncomeCategory, React.ReactNode> = {
-    food: <UtensilsCrossed size={size} />,
-    transport: <Car size={size} />,
-    bills: <Receipt size={size} />,
-    shopping: <ShoppingBag size={size} />,
-    entertainment: <Music size={size} />,
-    health: <Stethoscope size={size} />,
-    education: <GraduationCap size={size} />,
-    other: <HelpCircle size={size} />,
-    salary: <CircleDollarSign size={size} />,
-    business: <Briefcase size={size} />,
-    investment: <TrendingUp size={size} />,
-    gift: <Gift size={size} />,
+  const icons: Record<ExpenseCategory | IncomeCategory, string> = {
+    food: 'coffee',
+    transport: 'truck',
+    bills: 'file-text',
+    shopping: 'shopping-bag',
+    entertainment: 'music',
+    health: 'activity',
+    education: 'book-open',
+    other: 'help-circle',
+    salary: 'dollar-sign',
+    business: 'briefcase',
+    investment: 'trending-up',
+    gift: 'gift',
   };
 
   return (
-    <div className={cn('flex items-center justify-center', className)}>
-      {icons[category] || <HelpCircle size={size} />}
-    </div>
+    <Icon 
+      name={icons[category] || 'help-circle'} 
+      size={size} 
+      color={color}
+    />
   );
 };
 

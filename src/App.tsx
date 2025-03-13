@@ -1,34 +1,31 @@
 
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { ExpenseProvider } from "@/context/ExpenseContext";
-import Index from "./pages/Index";
-import ReportsPage from "./pages/ReportsPage";
-import SettingsPage from "./pages/SettingsPage";
-import NotFound from "./pages/NotFound";
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { ExpenseProvider } from '@/context/ExpenseContext';
+import Index from './screens/Index';
+import ReportsScreen from './screens/ReportsScreen';
+import SettingsScreen from './screens/SettingsScreen';
+import { StatusBar } from 'react-native';
 
-const queryClient = new QueryClient();
+const Stack = createNativeStackNavigator();
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <ExpenseProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/reports" element={<ReportsPage />} />
-            <Route path="/settings" element={<SettingsPage />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </ExpenseProvider>
-    </TooltipProvider>
-  </QueryClientProvider>
+  <NavigationContainer>
+    <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
+    <ExpenseProvider>
+      <Stack.Navigator 
+        initialRouteName="Home"
+        screenOptions={{
+          headerShown: false,
+        }}
+      >
+        <Stack.Screen name="Home" component={Index} />
+        <Stack.Screen name="Reports" component={ReportsScreen} />
+        <Stack.Screen name="Settings" component={SettingsScreen} />
+      </Stack.Navigator>
+    </ExpenseProvider>
+  </NavigationContainer>
 );
 
 export default App;

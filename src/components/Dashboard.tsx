@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useExpenseContext } from '@/context/ExpenseContext';
@@ -8,8 +7,7 @@ import {
   getExpenseTrend,
   calculateRemainingBudget
 } from '@/utils/expenseUtils';
-import { PieChart, PieArcDatum } from 'recharts';
-import { Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, Tooltip } from 'recharts';
+import { Pie, Cell, ResponsiveContainer, PieChart, BarChart, Bar, XAxis, Tooltip } from 'recharts';
 import { ArrowDown, ArrowUp, Wallet, TrendingUp } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import { cn } from '@/lib/utils';
@@ -157,7 +155,7 @@ const Dashboard: React.FC = () => {
                   ))}
                 </Pie>
                 <Tooltip 
-                  formatter={(value) => [formatCurrency(Number(value)), entry => entry.name]}
+                  formatter={(value) => [formatCurrency(Number(value)), expenseData.length > 0 ? expenseData[0].name : '']}
                   contentStyle={{
                     borderRadius: '0.5rem',
                     border: '1px solid var(--border)',

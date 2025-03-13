@@ -1,7 +1,14 @@
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { Transaction, TransactionType, ExpenseCategory, IncomeCategory, generateId } from '@/utils/expenseUtils';
-import { toast } from '@/components/ui/use-toast';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { 
+  Transaction, 
+  TransactionType, 
+  ExpenseCategory, 
+  IncomeCategory, 
+  generateId 
+} from '@/utils/expenseUtils';
+import { Alert } from 'react-native';
 
 interface ExpenseContextType {
   transactions: Transaction[];
@@ -34,11 +41,11 @@ export const ExpenseProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [budget, setBudget] = useState<number>(2000);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  // Load data from localStorage on initial render
+  // Load data from AsyncStorage on initial render
   useEffect(() => {
-    const loadData = () => {
+    const loadData = async () => {
       try {
-        const savedData = localStorage.getItem(LOCAL_STORAGE_KEY);
+        const savedData = await AsyncStorage.getItem(LOCAL_STORAGE_KEY);
         if (savedData) {
           const parsedData = JSON.parse(savedData);
           
@@ -100,12 +107,11 @@ export const ExpenseProvider: React.FC<{ children: React.ReactNode }> = ({ child
           setTransactions(sampleTransactions);
         }
       } catch (error) {
-        console.error('Error loading data from localStorage', error);
-        toast({
-          title: 'Error loading data',
-          description: 'There was a problem loading your saved data',
-          variant: 'destructive'
-        });
+        console.error('Error loading data from AsyncStorage', error);
+        Alert.alert(
+          'Error',
+          'There was a problem loading your saved data'
+        );
       } finally {
         setIsLoading(false);
       }
@@ -115,23 +121,26 @@ export const ExpenseProvider: React.FC<{ children: React.ReactNode }> = ({ child
     setTimeout(loadData, 500);
   }, []);
 
-  // Save data to localStorage whenever it changes
+  // Save data to AsyncStorage whenever it changes
   useEffect(() => {
-    if (!isLoading) {
-      try {
-        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify({
-          transactions,
-          budget
-        }));
-      } catch (error) {
-        console.error('Error saving data to localStorage', error);
-        toast({
-          title: 'Error saving data',
-          description: 'There was a problem saving your data',
-          variant: 'destructive'
-        });
+    const saveData = async () => {
+      if (!isLoading) {
+        try {
+          await AsyncStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify({
+            transactions,
+            budget
+          }));
+        } catch (error) {
+          console.error('Error saving data to AsyncStorage', error);
+          Alert.alert(
+            'Error',
+            'There was a problem saving your data'
+          );
+        }
       }
-    }
+    };
+    
+    saveData();
   }, [transactions, budget, isLoading]);
 
   const addTransaction = (
@@ -151,10 +160,10 @@ export const ExpenseProvider: React.FC<{ children: React.ReactNode }> = ({ child
     
     setTransactions(prev => [...prev, newTransaction]);
     
-    toast({
-      title: `${type === 'expense' ? 'Expense' : 'Income'} added`,
-      description: `${type === 'expense' ? 'Expense' : 'Income'} of $${amount.toFixed(2)} has been added`
-    });
+    Alert.alert(
+      `${type === 'expense' ? 'Expense' : 'Income'} added`,
+      `${type === 'expense' ? 'Expense' : 'Income'} of $${amount.toFixed(2)} has been added`
+    );
     
     return newTransaction;
   };
@@ -162,19 +171,19 @@ export const ExpenseProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const deleteTransaction = (id: string) => {
     setTransactions(prev => prev.filter(t => t.id !== id));
     
-    toast({
-      title: 'Transaction deleted',
-      description: 'The transaction has been removed'
-    });
+    Alert.alert(
+      'Transaction deleted',
+      'The transaction has been removed'
+    );
   };
 
   const updateBudget = (amount: number) => {
     setBudget(amount);
     
-    toast({
-      title: 'Budget updated',
-      description: `Your monthly budget has been set to $${amount.toFixed(2)}`
-    });
+    Alert.alert(
+      'Budget updated',
+      `Your monthly budget has been set to $${amount.toFixed(2)}`
+    );
   };
 
   const value = {
